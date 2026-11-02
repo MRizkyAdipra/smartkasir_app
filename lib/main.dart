@@ -30,3 +30,5 @@ class SmartKasirApp extends StatelessWidget {
     );
   }
 }
+
+// Praktikum Minggu 10 Selesai
