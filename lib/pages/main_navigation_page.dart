@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'dashboard_page.dart';
+import 'profil_toko_page.dart';
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
@@ -13,9 +14,19 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
   final List<Widget> _pages = [
     const DashboardPage(),
-    const Center(child: Text('Menu 2: Transaksi Kasir POS (Modul M14)', style: TextStyle(fontSize: 16))),
-    const Center(child: Text('Menu 3: Riwayat Penjualan & Laporan (Modul M12)', style: TextStyle(fontSize: 16))),
-    const Center(child: Text('Menu 4: Profil Toko & Pengaturan (Modul M12)', style: TextStyle(fontSize: 16))),
+    const Center(
+      child: Text(
+        'Menu 2: Transaksi Kasir POS (Modul M14)',
+        style: TextStyle(fontSize: 16),
+      ),
+    ),
+    const Center(
+      child: Text(
+        'Menu 3: Riwayat Penjualan & Laporan (Modul M14)',
+        style: TextStyle(fontSize: 16),
+      ),
+    ),
+    const ProfilTokoPage(),
   ];
 
   @override
@@ -26,7 +37,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -41,9 +52,12 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           },
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
-          selectedItemColor: Colors.teal.shade700,
+          selectedItemColor: const Color(0xFF1E3A8A),
           unselectedItemColor: Colors.grey.shade500,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 11,
+          ),
           unselectedLabelStyle: const TextStyle(fontSize: 10),
           items: const [
             BottomNavigationBarItem(
