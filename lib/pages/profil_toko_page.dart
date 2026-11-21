@@ -1,6 +1,8 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../helpers/database_helper.dart';
 import 'kelola_karyawan_page.dart';
+import 'kelola_pelanggan_page.dart';
 
 class ProfilTokoPage extends StatefulWidget {
   const ProfilTokoPage({super.key});
@@ -13,11 +15,12 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
   final _namaTokoController = TextEditingController();
   final _alamatController = TextEditingController();
   final _noWaController = TextEditingController();
-  final _igTokoController = TextEditingController(); // Tantangan 3: Controller Instagram Toko
+  final _igTokoController = TextEditingController();
   final _footerController = TextEditingController();
 
   bool _sedangMenyimpan = false;
   String _activeCashierName = 'Belum Ditentukan';
+  int _totalPelanggan = 0; // T3: Counter jumlah pelanggan aktif
 
   @override
   void initState() {
@@ -37,6 +40,8 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
 
   Future<void> _muatProfilToko() async {
     final prefs = await SharedPreferences.getInstance();
+    final totalPelanggan = await DatabaseHelper.instance.countPelanggan();
+    if (!mounted) return;
     setState(() {
       _namaTokoController.text = prefs.getString('nama_toko') ?? 'SmartKasir Poliban';
       _alamatController.text = prefs.getString('alamat_toko') ?? 'Jl. Brigjend H. Hasan Basry, Banjarmasin';
@@ -45,6 +50,7 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
       _footerController.text = prefs.getString('footer_struk') ??
           'Terima Kasih Atas Kunjungan Anda! Barang yang sudah dibeli tidak dapat ditukar.';
       _activeCashierName = prefs.getString('active_cashier_name') ?? 'Belum Ditentukan';
+      _totalPelanggan = totalPelanggan;
     });
   }
 
@@ -55,7 +61,7 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
     await prefs.setString('nama_toko', _namaTokoController.text.trim());
     await prefs.setString('alamat_toko', _alamatController.text.trim());
     await prefs.setString('no_wa', _noWaController.text.trim());
-    await prefs.setString('ig_toko', _igTokoController.text.trim()); // Tantangan 3: Simpan key 'ig_toko'
+    await prefs.setString('ig_toko', _igTokoController.text.trim());
     await prefs.setString('footer_struk', _footerController.text.trim());
 
     setState(() => _sedangMenyimpan = false);
@@ -142,6 +148,47 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
                 ],
               ),
             ),
+            const SizedBox(height: 12),
+            // MENU MANAJEMEN DATA PELANGGAN & MEMBER (MODUL M13 + T3 COUNTER)
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ListTile(
+                leading: const CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Color(0xFF0D9488),
+                  child: Icon(Icons.people_alt, color: Colors.white, size: 20),
+                ),
+                title: const Text(
+                  'Data Pelanggan & Lokasi GPS',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                subtitle: Text(
+                  '$_totalPelanggan Member Pelanggan Terdaftar',
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                trailing: const Icon(Icons.chevron_right, color: Color(0xFF1E3A8A)),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const KelolaPelangganPage(),
+                    ),
+                  );
+                  _muatProfilToko();
+                },
+              ),
+            ),
             const SizedBox(height: 20),
             const Text(
               'IDENTITAS USAHA & STRUK KASIR',
@@ -187,7 +234,6 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
               ),
             ),
             const SizedBox(height: 14),
-            // Tantangan 3: Kolom Input Akun Instagram Toko (@nama_toko)
             TextFormField(
               controller: _igTokoController,
               decoration: InputDecoration(
